@@ -1,0 +1,11 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "storage": [
+    {
+      "bucket": "book-ffa9e.firebasestorage.app",
+      "rules": "storage.rules"
+    }
+  ]
+}

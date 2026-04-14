@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Alert, Image, Platform, ScrollView, StyleSheet } from 'react-native';
+import { Alert, Image, ScrollView, StyleSheet } from 'react-native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { Button, Menu, Text, TextInput } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
@@ -68,16 +68,15 @@ export function BookUploadScreen({ route, navigation }: Props) {
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
-      quality: 0.8,
-      base64: Platform.OS === 'web',
+      quality: 0.7,
+      base64: true,
     });
 
     if (!result.canceled) {
       const asset = result.assets[0];
-      const nextImageUri =
-        Platform.OS === 'web' && asset.base64
-          ? `data:${asset.mimeType ?? 'image/jpeg'};base64,${asset.base64}`
-          : asset.uri;
+      const nextImageUri = asset.base64
+        ? `data:${asset.mimeType ?? 'image/jpeg'};base64,${asset.base64}`
+        : asset.uri;
 
       setImageUri(nextImageUri);
     }

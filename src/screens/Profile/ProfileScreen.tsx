@@ -125,7 +125,6 @@ const styles = StyleSheet.create({
   heroCard: {
     marginBottom: 12,
     borderWidth: 1,
-    overflow: 'hidden',
   },
   sectionTitle: {
     marginBottom: 8,

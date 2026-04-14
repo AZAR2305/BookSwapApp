@@ -14,9 +14,8 @@ import {
   type QueryDocumentSnapshot,
   type DocumentData,
 } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { Platform } from 'react-native';
-import { getDbOrThrow, getStorageOrThrow } from '@/src/config/firebase';
+import { getDbOrThrow } from '@/src/config/firebase';
 import type { BookCondition, BookListing } from '@/src/utils/types';
 
 export interface BookFilter {
@@ -29,19 +28,12 @@ const getBooksCollection = () => collection(getDbOrThrow(), 'books');
 
 const normalizeText = (value: string) => value.trim().toLowerCase();
 
+const isDataUrl = (value: string) => value.startsWith('data:image/');
+
 const uploadBookImage = async (payload: { userId: string }, imageUri: string) => {
-  if (Platform.OS === 'web') {
-    return imageUri;
-  }
-
-  const storage = getStorageOrThrow();
-  const filename = `${payload.userId}/${Date.now()}.jpg`;
-  const imageRef = ref(storage, `books/${filename}`);
-  const response = await fetch(imageUri);
-  const blob = await response.blob();
-
-  await uploadBytes(imageRef, blob);
-  return getDownloadURL(imageRef);
+  if (isDataUrl(imageUri)) return imageUri;
+  if (Platform.OS === 'web') return imageUri;
+  return imageUri;
 };
 
 const findDuplicateBookForUser = async (
@@ -91,12 +83,20 @@ export const createBookListing = async (
 
   const imageUrl = await uploadBookImage(payload, imageUri);
 
-  await addDoc(booksCollection, {
-    ...payload,
-    imageUrl,
-    status: 'active',
-    createdAt: serverTimestamp(),
-  });
+  try {
+    await addDoc(booksCollection, {
+      ...payload,
+      imageUrl,
+      status: 'active',
+      createdAt: serverTimestamp(),
+    });
+  } catch (firestoreError: any) {
+    console.error('createBookListing: Firestore document creation failed', {
+      code: firestoreError.code,
+      message: firestoreError.message,
+    });
+    throw new Error(`Could not save book listing: ${firestoreError.message}`);
+  }
 };
 
 export const subscribeToBooks = (
@@ -179,14 +179,25 @@ export const subscribeToBooks = (
       throw new Error('You already have another listing for this book. Update the existing one instead.');
     }
 
-    const nextImageUrl = imageUri ? await uploadBookImage(payload, imageUri) : existing.imageUrl;
+    let nextImageUrl = existing.imageUrl;
+    if (imageUri) {
+      nextImageUrl = await uploadBookImage(payload, imageUri);
+    }
 
-    await updateDoc(doc(db, 'books', bookId), {
-      ...payload,
-      imageUrl: nextImageUrl,
-      status: 'active',
-      createdAt: existing.createdAt ?? serverTimestamp(),
-    });
+    try {
+      await updateDoc(doc(db, 'books', bookId), {
+        ...payload,
+        imageUrl: nextImageUrl,
+        status: 'active',
+        createdAt: existing.createdAt ?? serverTimestamp(),
+      });
+    } catch (firestoreError: any) {
+      console.error('updateBookListing: Firestore update failed', {
+        code: firestoreError.code,
+        message: firestoreError.message,
+      });
+      throw new Error(`Could not update book listing: ${firestoreError.message}`);
+    }
   };
 
 export const loadBooksPage = async (

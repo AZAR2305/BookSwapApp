@@ -51,7 +51,19 @@ cp .env.example .env
    - Fill individual `EXPO_PUBLIC_FIREBASE_*` keys, or
    - Set `EXPO_PUBLIC_FIREBASE_CONFIG_JSON` with your Firebase web config JSON.
 
-4. Run app in Expo Go:
+4. **Deploy Firebase Security Rules** (required):
+
+   Deploy Firestore and Storage rules to your Firebase project:
+
+   ```bash
+   npm install -g firebase-tools
+   firebase login
+   firebase deploy --only firestore:rules,storage
+   ```
+
+   This deploys `firestore.rules` and `storage.rules` from the project root.
+
+5. Run app in Expo Go:
 
 ```bash
 npx expo start

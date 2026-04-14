@@ -1,6 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 import { ENV, parsedFirebaseConfig, isFirebaseConfigured } from './env';
 
@@ -18,20 +17,17 @@ const firebaseConfig = {
 let app = null as ReturnType<typeof getApp> | null;
 let auth = null as ReturnType<typeof getAuth> | null;
 let db = null as ReturnType<typeof getFirestore> | null;
-let storage = null as ReturnType<typeof getStorage> | null;
 
 if (isFirebaseConfigured) {
   try {
     app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
-    storage = getStorage(app);
   } catch (error) {
     console.warn('Firebase initialization failed. The app will run without Firebase until valid web config values are provided.', error);
     app = null;
     auth = null;
     db = null;
-    storage = null;
   }
 }
 
@@ -48,9 +44,4 @@ export const getDbOrThrow = () => {
   return db;
 };
 
-export const getStorageOrThrow = () => {
-  if (!storage) throw new Error(firebaseNotConfiguredMessage);
-  return storage;
-};
-
-export { app, auth, db, storage };
+export { app, auth, db };
