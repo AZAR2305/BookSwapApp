@@ -23,5 +23,5 @@ export type RootStackParamList = {
   OrderConfirmation: { message?: string };
   ReviewSeller: { orderId: string; sellerId: string };
   EditProfile: undefined;
-  ChatRoom: { threadId: string; title?: string };
+  ChatRoom: { threadId: string; title?: string; bookId?: string };
 };

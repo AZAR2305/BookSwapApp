@@ -51,7 +51,9 @@ cp .env.example .env
    - Fill individual `EXPO_PUBLIC_FIREBASE_*` keys, or
    - Set `EXPO_PUBLIC_FIREBASE_CONFIG_JSON` with your Firebase web config JSON.
 
-4. **Deploy Firebase Security Rules** (required):
+4. Add `EXPO_PUBLIC_GEMINI_API_KEY` if you want the chat assistant to summarize the current book listing.
+
+5. **Deploy Firebase Security Rules** (required):
 
    Deploy Firestore and Storage rules to your Firebase project:
 
@@ -96,6 +98,7 @@ This app uses a Stripe-compatible checkout service via Axios. In Expo Go, checko
 - Admin: role-based dashboard, users list, block/unblock, report moderation
 - Notifications: push registration + local notifications for new books/orders
 - Chat: realtime buyer-seller messaging with Firestore threads/messages
+- Chat: realtime buyer-seller messaging with Firestore threads/messages plus a Gemini-powered book assistant panel
 - Bonus: wishlist, dark mode, basic pagination, AI recommendation hook (requires API URL)
 
 ## Firestore Schema (Sample)

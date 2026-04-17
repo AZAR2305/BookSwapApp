@@ -8,6 +8,7 @@ export const ENV = {
   firebaseMeasurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID ?? '',
   stripeSecretApiUrl: process.env.EXPO_PUBLIC_STRIPE_SECRET_API_URL ?? '',
   aiRecommendationApiUrl: process.env.EXPO_PUBLIC_AI_RECOMMENDER_API_URL ?? '',
+  geminiApiKey: process.env.EXPO_PUBLIC_GEMINI_API_KEY ?? '',
   firebaseConfigJson: process.env.EXPO_PUBLIC_FIREBASE_CONFIG_JSON ?? '',
 };
 

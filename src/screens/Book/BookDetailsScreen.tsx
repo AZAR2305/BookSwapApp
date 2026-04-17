@@ -26,7 +26,7 @@ export function BookDetailsScreen() {
   const startChat = async () => {
     if (!user) return;
     const threadId = await ensureThread(user.uid, book.userId, book.id);
-    navigation.navigate('ChatRoom', { threadId, title: book.title });
+    navigation.navigate('ChatRoom', { threadId, title: book.title, bookId: book.id });
   };
 
   return (

@@ -64,6 +64,29 @@ export const subscribeToThreads = (userId: string, callback: (threads: ChatThrea
   );
 };
 
+export const subscribeToThread = (
+  threadId: string,
+  callback: (thread: ChatThread | null) => void
+) => {
+  const db = getDbOrThrow();
+
+  return onSnapshot(
+    doc(db, 'threads', threadId),
+    (snapshot) => {
+      if (!snapshot.exists()) {
+        callback(null);
+        return;
+      }
+
+      callback({ id: snapshot.id, ...(snapshot.data() as Omit<ChatThread, 'id'>) });
+    },
+    (error) => {
+      console.warn('Thread listener failed:', error);
+      callback(null);
+    }
+  );
+};
+
 export const subscribeToMessages = (
   threadId: string,
   callback: (messages: ChatMessage[]) => void
